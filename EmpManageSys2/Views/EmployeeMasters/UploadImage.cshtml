@@ -1,0 +1,13 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<form asp-action="UploadImage" asp-controller="EmployeeMasters" enctype="multipart/form-data" method="post">
+    <div class="form-group">
+        <label for="image">Choose image to upload:</label>
+        <input type="file" class="form-control" name="image" id="image" />
+    </div>
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>
