@@ -40,13 +40,13 @@
 
                 <div class="form-group">
                     <label hidden asp-for="EmployeeCode" class="control-label"></label>
-                    <input hidden asp-for="EmployeeCode" maxlength="8" class="form-control" readonly/>
+                    <input hidden asp-for="EmployeeCode" maxlength="8" class="form-control" readonly />
                     <span asp-validation-for="EmployeeCode" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
                     <label asp-for="FirstName" class="control-label">First Name</label>
-                    <input asp-for="FirstName" maxlength="50" class="form-control" required/>
+                    <input asp-for="FirstName" maxlength="50" class="form-control" />
                     <span asp-validation-for="FirstName" class="text-danger"></span>
                 </div>
 
@@ -65,6 +65,7 @@
                             <option value="@country.RowId">@country.CountryName</option>
                         }
                     </select>
+                    <span asp-validation-for="ContryId" class="text-danger"></span>
                 </div>
 
                 <div>
@@ -72,6 +73,7 @@
                     <select id="StateDropdown" asp-for="StateId" class="form-control">
                         <option value="@EmpState.RowId">@EmpState.StateName</option>
                     </select>
+                    <span asp-validation-for="StateId" class="text-danger"></span>
                 </div>
 
                 <div>
@@ -79,26 +81,27 @@
                     <select id="CityDropdown" asp-for="CityId" class="form-control">
                         <option value="@EmpCity.RowId">@EmpCity.CityName</option>
                     </select>
+                    <span asp-validation-for="CityId" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
                     <label asp-for="EmailAddress" class="control-label">Email Address</label>
-                    <input asp-for="EmailAddress" maxlength="100" class="form-control" required/>
+                    <input asp-for="EmailAddress" maxlength="100" class="form-control" type="email" />
                     <span asp-validation-for="EmailAddress" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="MobileNumber" class="control-label">Mobile Number</label>
-                    <input asp-for="MobileNumber" maxlength="15" type="number" class="form-control" required/>
+                    <input asp-for="MobileNumber" maxlength="15" type="text" class="form-control" />
                     <span asp-validation-for="MobileNumber" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="PanNumber" class="control-label">Pan Number</label>
-                    <input asp-for="PanNumber" maxlength="12" style="text-transform:uppercase" class="form-control" required/>
+                    <input asp-for="PanNumber" maxlength="12" style="text-transform:uppercase" class="form-control" type="text"/>
                     <span asp-validation-for="PanNumber" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="PassportNumber" class="control-label">Passport Number</label>
-                    <input asp-for="PassportNumber" maxlength="20" style="text-transform:uppercase" class="form-control" required/>
+                    <input asp-for="PassportNumber" maxlength="20" style="text-transform:uppercase" class="form-control" type="text"/>
                     <span asp-validation-for="PassportNumber" class="text-danger"></span>
                 </div>
 
@@ -107,8 +110,8 @@
                     <input type="file" id="file" class="form-control" onchange="return fileValidation()" name="image" id="image" />
                 </div>
 
-                <div hidden>
-                    <img width="100px" height="100" id="imagePreview" />
+                <div>
+                    <img style="width=100px height=100px" src="~/uploads/@Model.ProfileImage"  id="imagePreview" />
                 </div>
 
                 <div class="form-group">
@@ -129,7 +132,7 @@
 
                 <div class="form-group">
                     <label asp-for="DateOfBirth" class="control-label">Date Of Birth</label>
-                    <input asp-for="DateOfBirth" type="date" class="form-control" required/>
+                    <input asp-for="DateOfBirth" type="date" class="form-control" required />
                     <span asp-validation-for="DateOfBirth" class="text-danger"></span>
                 </div>
 
@@ -141,10 +144,10 @@
 
                 <div hidden class="form-group form-check">
                     <label class="form-check-label">
-                        <input class="form-check-input" asp-for="IsDeleted" disabled="true"/> Is Deleted?
+                        <input class="form-check-input" asp-for="IsDeleted" disabled="true" /> Is Deleted?
                     </label>
                 </div>
-                
+
                 <div class="form-group">
                     <input type="submit" value="      Save     " class="btn btn-secondary" />
                     <a hidden class="btn btn-primary" asp-action="Index">Back to List</a>
@@ -188,9 +191,11 @@
                     $('#CityDropdown').empty().append('<option value="">Select City</option>');
                 }
             });
-            
-            
+
+
         });
+
+        
 
         function fileValidation() {
             var fileInput = document.getElementById('file');

@@ -1,6 +1,6 @@
-﻿@model EmpManageSys2.ViewModel.PaginatedList
+﻿@* @model EmpManageSys2.ViewModel.PaginatedList *@
 
-@* @model EmpManageSys2.ViewModel.PaginatedList<EmployeeMaster> *@
+@model List<EmpManageSys2.Models.EmployeeMaster>
 
 @{
     ViewData["Title"] = "Index";
@@ -16,122 +16,122 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.bootstrap.css">
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js">
+    </script>
 
     <script src="~/js/index.js"></script>
 </head>
 <body>
     <input hidden id="MsgData" value="@NotificationMessage" />
-    <form asp-action="Index" method="get">
-        <div style="display:flex; justify-content:space-between">
-            <p>
-                <strong>Find by name or email:</strong> <input type="text" name="searchTerm" value="@Model.SearchTerm" />
-                <input type="submit" value="Search" />
-
-            <p>
-        </div>
-
-    </form>
-
-    <table class="table table-responsive-sm">
-        <thead>
-            <tr>
-                <th>
-                    @Html.ActionLink("Email Address", "Index", new { sortOrder = String.IsNullOrEmpty(Model.SortOrder) ? "Email Address" : "" })
-                </th>
-                <th>
-                    @Html.ActionLink("Country", "Index", new { sortOrder = Model.SortOrder == "Country" ? "Country" : "Country" })
-                </th>
-                <th>
-                    @Html.ActionLink("State", "Index", new { sortOrder = Model.SortOrder == "State" ? "State" : "State" })
-                </th>
-                <th>
-                    @Html.ActionLink("City", "Index", new { sortOrder = Model.SortOrder == "City" ? "City" : "City" })
-                </th>
-                <th>
-                    @Html.ActionLink("Pan Number", "Index", new { sortOrder = Model.SortOrder == "Pan Number" ? "Pan Number" : "Pan Number" })
-                </th>
-                <th>
-                    @Html.ActionLink("Passport Number", "Index", new { sortOrder = Model.SortOrder == "Passport Number" ? "Passport Number" : "Passport Number" })
-                </th>
-                <th>
-                    @Html.ActionLink("Gender", "Index", new { sortOrder = Model.SortOrder == "Gender" ? "Gender" : "Gender" })
-                </th>
-                <th>
-                    @Html.ActionLink("Is Active", "Index", new { sortOrder = Model.SortOrder == "Is Active" ? "Is Active" : "Is Active" })
-                </th>
-                <th>
-                    @Html.ActionLink("Profile Image", "Index", new { sortOrder = Model.SortOrder == "Profile Image" ? "Profile Image" : "Profile Image" })
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.employeeMasters)
-            {
-                <tr>
-                    <td style="padding-top:50px">@item.EmailAddress</td>
-                    <td style="padding-top:50px">@item.Contry?.CountryName</td>
-                    <td style="padding-top:50px">@item.State?.StateName</td>
-                    <td style="padding-top:50px">@item.City?.CityName</td>
-                    <td style="padding-top:50px">@item.PanNumber</td>
-                    <td style="padding-top:50px">@item.PassportNumber</td>
-                    <td style="padding-top:50px">
-                        @* @Html.DisplayFor(modelItem => item.Gender==1 ? "Male" : "Female") *@
-                        @if (item.Gender == 1)
-                        {
-                            <span>Male</span>
-                        }
-                        else
-                        {
-                            <span>Female</span>
-                        }
-                    </td>
-                    <td style="padding-top:50px">
-                        @if (item.IsActive == true)
-                        {
-                            <span>Yes</span>
-                        }
-                        else
-                        {
-                            <span>No</span>
-                        }
-                        @* @Html.DisplayFor(modelItem => item.IsActive) *@
-                    </td>
-                    <td>
-                        @if (item.ProfileImage != null)
-                        {
-                            <img width="100" , height="100" src="~/uploads/@item.ProfileImage" />
-                        }
-                        else
-                        {
-                            <p>No Profile Photo</p>
-                        }
-
-                    </td>
-
-
-                    <td style="padding-top:30px">
-                        <a style="width:65px" class="btn btn-secondary" asp-action="Edit" asp-route-id="@item.RowId">Edit</a>
-                        <br />
-                        <form method="post">
-                            <button type="button" class="btn btn-danger" onclick="confirmDelete(@item.RowId)">Delete</button>
-                        </form>
-
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
     <p>
         <input type="submit" class="btn btn-secondary" value="Add Employee" onclick="location.href='@Url.Action("Create", "EmployeeMasters")'" />
     </p>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-condensed table-striped table-hover sortable" id="dtEmployee" style="width:100%">
+            <thead>
+                <tr>
+                    <th>
+                        Email Address
+                    </th>
+                    <th>
+                        First Name
+                    </th>
+                    <th>
+                        Country
+                    </th>
+                    <th>
+                        State
+                    </th>
+                    <th>
+                        City
+                    </th>
+                    <th>
+                        Pan Number
+                    </th>
+                    <th>
+                        Passport Number
+                    </th>
+                    <th>
+                        Gender
+                    </th>
+                    <th>
+                        Is Active
+                    </th>
+                    <th>
+                        Profile Image
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td style="padding-top:50px">@item.EmailAddress</td>
+                        <td style="padding-top:50px">@item.FirstName</td>
+                        <td style="padding-top:50px">@item.Contry?.CountryName</td>
+                        <td style="padding-top:50px">@item.State?.StateName</td>
+                        <td style="padding-top:50px">@item.City?.CityName</td>
+                        <td style="padding-top:50px">@item.PanNumber</td>
+                        <td style="padding-top:50px">@item.PassportNumber</td>
+                        <td style="padding-top:50px">
+                            @* @Html.DisplayFor(modelItem => item.Gender==1 ? "Male" : "Female") *@
+                            @if (item.Gender == 1)
+                            {
+                                <span>Male</span>
+                            }
+                            else
+                            {
+                                <span>Female</span>
+                            }
+                        </td>
+                        <td style="padding-top:50px">
+                            @if (item.IsActive == true)
+                            {
+                                <span>Yes</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                            @* @Html.DisplayFor(modelItem => item.IsActive) *@
+                        </td>
+                        <td>
+                            @if (item.ProfileImage != null)
+                            {
+                                <img width="100" , height="100" src="~/uploads/@item.ProfileImage" />
+                            }
+                            else
+                            {
+                                <p>No Profile Photo</p>
+                            }
+
+                        </td>
+
+
+                        <td style="padding-top:30px">
+                            <a style="width:65px" class="btn btn-secondary" asp-action="Edit" asp-route-id="@item.RowId">Edit</a>
+                            <br />
+                            <form method="post">
+                                <button type="button" class="btn btn-danger" onclick="confirmDelete(@item.RowId)">Delete</button>
+                            </form>
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+
 
     @* <div>
     Page @(Model.PageIndex) of @(Model.TotalPages)
@@ -146,19 +146,19 @@
     }
     </div> *@
 
-    <div>
+   @*  <div>
         <nav aria-label="Page navigation">
             <ul class="pagination">
                 @if (Model.HasPreviousPage)
                 {
                     <li class="page-item">
-                        <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)">Previous</a>
+                        <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)"><i class="fa fa-arrow-circle-left" style="font-size:17px"></i></a>
                     </li>
                 }
                 else
                 {
                     <li class="page-item disabled">
-                        <a class="page-link">Previous</a>
+                        <a class="page-link"><i class="fa fa-arrow-circle-left" style="font-size:17px"></i></a>
                     </li>
                 }
 
@@ -172,24 +172,24 @@
                 @if (Model.HasNextPage)
                 {
                     <li class="page-item">
-                        <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)">Next</a>
+
+                        <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)"><i class="fa fa-arrow-circle-right" style="font-size:17px"></i></a>
                     </li>
                 }
                 else
                 {
                     <li class="page-item disabled">
-                        <a class="page-link">Next</a>
+                        <a class="page-link"><i class="fa fa-arrow-circle-right" style="font-size:17px"></i></a>
                     </li>
                 }
             </ul>
         </nav>
-    </div>
+    </div> *@
 
 
 
-    @* <script>
-
-    </script> *@
-
+    <script>
+        new DataTable('#dtEmployee');
+    </script>
 </body>
 </html>

@@ -1,9 +1,12 @@
 ﻿@model EmpManageSys2.Models.EmployeeMaster
 
 @{
-
+    var isrefreshed = ViewBag.IsRefreshed;
     ViewData["Title"] = "Create";
     var countries = ViewData["Countries"] as List<EmpManageSys2.Models.Country>;
+    var Empcountry = ViewBag.Country;
+    var EmpState = ViewBag.State;
+    var EmpCity = ViewBag.City;
     string NewEmpCode = "0000";
     var notificationMessage = ViewBag.ErrorMessage;
 }
@@ -16,6 +19,8 @@
     <title>Your Page</title>
     <link href="~/css/Style.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.11/jquery.validate.unobtrusive.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Latest compiled and minified CSS -->
@@ -30,20 +35,20 @@
 <body>
     <h1>Add Employee Details</h1>
     <input hidden id="MsgData" value="@notificationMessage" />
+    <input hidden id="isRefreshedIn" value="@isrefreshed" />
     <div class="container d-flex justify-content-center">
         <div class="col-md-4">
             <form asp-action="Create" enctype="multipart/form-data" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
                 <div class="form-group">
                     <label hidden asp-for="EmployeeCode" class="control-label"></label>
                     <input hidden asp-for="EmployeeCode" value="@NewEmpCode" class="form-control" readonly />
-                    <span asp-validation-for="EmployeeCode" class="text-danger"></span>
+                    @* <span asp-validation-for="EmployeeCode" class="text-danger"></span> *@
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="FirstName" class="control-label">First Name</label>
-                    <input asp-for="FirstName" maxlength="50" class="form-control" required/>
+                    <label asp-for="FirstName" class="control-label">First Name<span class="required">*</span></label>
+                    <input asp-for="FirstName" maxlength="50" class="form-control" />
                     <span asp-validation-for="FirstName" class="text-danger"></span>
                 </div>
 
@@ -54,67 +59,73 @@
                 </div>
 
                 <div>
-                    <label>Country</label>
-                    <select id="CountryDropdown" asp-for="ContryId" class="form-control">
-                        <option value="">Select Country</option>
-                        @if(countries != null)
+                    <label>Country<span class="required">*</span></label>
+                    <select id="CountryDropdown" asp-for="ContryId" class="form-control" onclick="loadCountries()">
+                        <option value="@Empcountry.RowId">@Empcountry.CountryName</option>
+                        @* @if (countries != null && isrefreshed != "Yes")
                         {
-                            @foreach (var country in countries)
-                            {
-                                <option value="@country.RowId">@country.CountryName</option>
-                            }
+                        @foreach (var country in countries)
+                        {
+                        <option value="@country.RowId">@country.CountryName</option>
                         }
+                        } *@
                     </select>
+                    <span asp-validation-for="ContryId" class="text-danger"></span>
+                </div>
+
+
+                <div>
+                    <label>State<span class="required">*</span></label>
+                    <select id="StateDropdown" asp-for="StateId" class="form-control" onclick="loadStates()">
+                        <option value="@EmpState.RowId">@EmpState.StateName</option>
+                    </select>
+                    <span asp-validation-for="StateId" class="text-danger"></span>
                 </div>
 
                 <div>
-                    <label>State</label>
-                    <select id="StateDropdown" asp-for="StateId" class="form-control" required>
-                        <option value="">Select State</option>
+                    <label>City<span class="required">*</span></label>
+                    <select id="CityDropdown" asp-for="CityId" class="form-control" onclick="loadCity()">
+                        <option value="@EmpCity.RowId">@EmpCity.CityName</option>
                     </select>
-                </div>
-
-                <div>
-                    <label>City</label>
-                    <select id="CityDropdown" asp-for="CityId" class="form-control" required>
-                        <option value="">Select City</option>
-                    </select>
+                    <span asp-validation-for="CityId" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="EmailAddress" class="control-label">Email Address</label>
-                    <input asp-for="EmailAddress" maxlength="100" class="form-control" required/>
+                    <label asp-for="EmailAddress" class="control-label">Email Address<span class="required">*</span></label>
+                    @* <input asp-for="EmailAddress" maxlength="100" class="form-control" type="email" /> *@
+                    <input asp-for="EmailAddress" maxlength="100" class="form-control" type="text" />
                     <span asp-validation-for="EmailAddress" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="MobileNumber" class="control-label">Mobile Number</label>
-                    <input asp-for="MobileNumber" maxlength="15" class="form-control" required/>
+                    <label asp-for="MobileNumber" class="control-label">Mobile Number<span class="required">*</span></label>
+                    @* <input asp-for="MobileNumber" maxlength="15" class="form-control" type="text" pattern="[7-9]{1}[0-9]{9}" /> *@
+                    <input asp-for="MobileNumber" maxlength="15" class="form-control" type="text" />
                     <span asp-validation-for="MobileNumber" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="PanNumber" class="control-label">Pan Number</label>
-                    <input asp-for="PanNumber" style="text-transform:uppercase" maxlength="12" class="form-control" required/>
+                    <label asp-for="PanNumber" class="control-label">Pan Number<span class="required">*</span></label>
+                    <input asp-for="PanNumber" maxlength="12" style="text-transform:uppercase" class="form-control" type="text" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}$" />
                     <span asp-validation-for="PanNumber" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="PassportNumber" class="control-label">Passport Number</label>
-                    <input asp-for="PassportNumber" maxlength="20" style="text-transform:uppercase" class="form-control" required/>
+                    <label asp-for="PassportNumber" class="control-label">Passport Number<span class="required">*</span></label>
+                    <input asp-for="PassportNumber" maxlength="20" style="text-transform:uppercase" class="form-control" type="text" pattern="^[A-Z][1-9]\d\s?\d{4}[1-9]$" />
                     <span asp-validation-for="PassportNumber" class="text-danger"></span>
                 </div>
 
                 <div style="margin-top:10px" class="form-group">
-                    <label>Profile Photo</label>
-                    <input type="file" id="file" class="form-control" onchange="return fileValidation()" name="image" id="image" />
-                    @* <span asp-validation-for="ProfileImage" class="text-danger"></span> *@
+                    <label asp-for="image">Profile Photo<span class="required">*</span></label>
+                    <input asp-for="image" type="file" id="file" class="form-control" onchange="return fileValidation()" />
+                    <span asp-validation-for="image" class="text-danger"></span>
                 </div>
 
-                <div hidden>
-                    <img width="100px" height="100" id="imagePreview" />
+                <div>
+                    <img style="width=100px height=100px" id="imagePreview" />
                 </div>
-                
+
                 @* <div width="100px" height="100" id="imagePreview" class="" style="margin-top:10px" id="imagePreview"></div> *@
                 <div class="form-group">
                     <label>Select Gender</label><br />
@@ -134,20 +145,20 @@
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="DateOfBirth" class="control-label">Date Of Birth</label>
-                    <input asp-for="DateOfBirth" type="date" class="form-control" required/>
+                    <label asp-for="DateOfBirth" id="DateOfBirth" class="control-label">Date Of Birth<span class="required">*</span></label>
+                    <input asp-for="DateOfBirth" type="date" class="form-control" />
                     <span asp-validation-for="DateOfBirth" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="DateOfJoinee" class="control-label">Date Of Joinee</label>
+                    <label asp-for="DateOfJoinee" id="DateOfJoinee" class="control-label">Date Of Joinee<span class="required">*</span></label>
                     <input asp-for="DateOfJoinee" type="date" class="form-control" />
                     <span asp-validation-for="DateOfJoinee" class="text-danger"></span>
                 </div>
 
                 <div class="form-group form-check">
                     <label hidden class="form-check-label">
-                        <input class="form-check-input" asp-for="IsDeleted"/> @Html.DisplayNameFor(model => model.IsDeleted)
+                        <input class="form-check-input" asp-for="IsDeleted" /> @Html.DisplayNameFor(model => model.IsDeleted)
                     </label>
                 </div>
 
@@ -163,27 +174,68 @@
 
 
     <script>
-        $(document).ready(function () {
-            $('#CountryDropdown').change(function () {
-                var countryId = $(this).val();
-                if (countryId) {
+        var countriesLoaded = false;
+        var statesLoaded = false;
+        var citiesLoaded = false;
+        function loadCountries() {
+            if (!countriesLoaded) {
+                $.ajax({
+                    url: '@Url.Action("GetCountries", "EmployeeMasters")',
+                    type: 'GET',
+
+                    success: function (data) 
+                    {
+                        var countryDropdown = $('#CountryDropdown');
+                        countryDropdown.empty();
+                        countryDropdown.append('<option value="">Select Country</option>');
+                        $.each(data, function (index, country) 
+                        {
+                            countryDropdown.append('<option value="' + country.rowId + '">' + country.countryName + '</option>');
+                        });
+                        countriesLoaded = true;
+                        statesLoaded = false;
+                        citiesLoaded = false;
+                        countryDropdown.focus();
+                    }
+                });
+            }
+            else {
+                $('#CountryDropdown').focus(); // Open the dropdown if already loaded
+            }
+        }
+
+        function loadStates() {
+            var countryId = $('#CountryDropdown').val();
+            if (countryId) {
+                if (!statesLoaded) 
+                {
                     $.getJSON('@Url.Action("GetStates", "EmployeeMasters")', { countryId: countryId }, function (data) {
                         var stateDropdown = $('#StateDropdown');
                         stateDropdown.empty();
                         stateDropdown.append('<option value="">Select State</option>');
-                        $.each(data, function (index, state) {
+                        $.each(data, function (index, state) 
+                        {
                             stateDropdown.append('<option value="' + state.rowId + '">' + state.stateName + '</option>');
                         });
+                        statesLoaded = true;
+                        countriesLoaded = false;
+                        citiesLoaded = false;
+                        stateDropdown.focus();
                     });
-                } else {
-                    $('#StateDropdown').empty().append('<option value="">Select State</option>');
-                    $('#CityDropdown').empty().append('<option value="">Select City</option>');
+                    
                 }
-            });
+            }
+            else {
+                $('#StateDropdown').empty().append('<option value="">Select State</option>');
+                $('#CityDropdown').empty().append('<option value="">Select City</option>');
+            }
+        }
 
-            $('#StateDropdown').change(function () {
-                var stateId = $(this).val();
-                if (stateId) {
+        function loadCity() {
+            var stateId = $('#StateDropdown').val();
+            if (stateId) {
+                if (!citiesLoaded) 
+                {
                     $.getJSON('@Url.Action("GetCities", "EmployeeMasters")', { stateId: stateId }, function (data) {
                         var cityDropdown = $('#CityDropdown');
                         cityDropdown.empty();
@@ -191,32 +243,51 @@
                         $.each(data, function (index, city) {
                             cityDropdown.append('<option value="' + city.rowId + '">' + city.cityName + '</option>');
                         });
+                        citiesLoaded = true;
+                        statesLoaded = false;
+                        cityDropdown.focus();
                     });
-                } else {
-                    $('#CityDropdown').empty().append('<option value="">Select City</option>');
                 }
-            });
-
-            var CountryDropDwn = document.getElementById("CountryDropdown").value;
-            
-            if (CountryDropDwn.value != '') {
-                var countryId = CountryDropDwn;
-               if (countryId) {
-                   $.getJSON('@Url.Action("GetStates", "EmployeeMasters")', { countryId: countryId }, function (data) {
-                       var stateDropdown = $('#StateDropdown');
-                       stateDropdown.empty();
-                       stateDropdown.append('<option value="">Select State</option>');
-                       $.each(data, function (index, state) {
-                           stateDropdown.append('<option value="' + state.rowId + '">' + state.stateName + '</option>');
-                           console.log(countryId);
-                       });
-                   });
-               } else {
-                   $('#StateDropdown').empty().append('<option value="">Select State</option>');
-                   $('#CityDropdown').empty().append('<option value="">Select City</option>');
-               }
             }
+            else {
+                $('#CityDropdown').empty().append('<option value="">Select City</option>');
+            }
+        }
+
+        $('#CountryDropdown').change(function () {
+            // Reset states and cities when a new country is selected
+            $('#StateDropdown').empty().append('<option value="">Select State</option>');
+            $('#CityDropdown').empty().append('<option value="">Select City</option>');
         });
+        $('#StateDropdown').change(function () {
+            // Reset states and cities when a new country is selected
+            $('#CityDropdown').empty().append('<option value="">Select City</option>');
+        });
+
+        //     var CountryDropDwn = document.getElementById("CountryDropdown").value;
+
+        //     if (CountryDropDwn.value != '') {
+        //         var countryId = CountryDropDwn;
+        //         if (countryId) {
+        //             $.getJSON('@Url.Action("GetStates", "EmployeeMasters")', { countryId: countryId }, function (data) {
+        //                 var stateDropdown = $('#StateDropdown');
+        //                 stateDropdown.empty();
+        //                 stateDropdown.append('<option value="">Select State</option>');
+        //                 $.each(data, function (index, state) {
+        //                     stateDropdown.append('<option value="' + state.rowId + '">' + state.stateName + '</option>');
+        //                 });
+        //             });
+        //         } else {
+        //             $('#StateDropdown').empty().append('<option value="">Select State</option>');
+        //             $('#CityDropdown').empty().append('<option value="">Select City</option>');
+        //         }
+        //     }
+        // }
+
+        var isRefreshedJs = document.getElementById('isRefreshedIn').value;
+        if (isRefreshedJs != 'Yes') {
+            //loadLocation();
+        }
 
         function fileValidation() {
             var fileInput = document.getElementById('file');
@@ -229,7 +300,7 @@
             // Allowing file type
             var allowedExtensions = /(\.jpg|\.png)$/i;
 
-            
+
             if (!allowedExtensions.exec(filePath)) {
                 Swal.fire({
                     title: 'Invalid file type',
@@ -245,8 +316,7 @@
                 return false;
             }
             else {
-                if (fileKb >0 && fileKb <200)
-                {
+                if (fileKb > 0 && fileKb < 200) {
                     // Image preview
                     if (fileInput.files && fileInput.files[0]) {
                         var reader = new FileReader();
@@ -258,8 +328,7 @@
                         reader.readAsDataURL(fileInput.files[0]);
                     }
                 }
-                else
-                {
+                else {
                     Swal.fire({
                         title: 'File too large',
                         text: "Please select file size less than 200 kb",
@@ -273,7 +342,7 @@
                     fileInput.value = '';
                     return false;
                 }
-                
+
             }
         }
         $(document).ready(
@@ -294,12 +363,13 @@
     </script>
 
     @section Scripts {
-        <script>
-            @{
-                await Html.RenderPartialAsync("_ValidationScriptsPartial");
-            }
-        </script>
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
     }
+
+
+
 
 </body>
 </html>

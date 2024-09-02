@@ -1,4 +1,4 @@
-﻿
+﻿new DataTable('#dtEmployee');
 function confirmDelete(id) {
     Swal.fire({
         title: 'Are you sure?',

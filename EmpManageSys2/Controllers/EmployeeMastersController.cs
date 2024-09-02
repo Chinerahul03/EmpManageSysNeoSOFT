@@ -16,6 +16,7 @@ using EmpManageSys2.ViewModel;
 using System.Numerics;
 using NuGet.Common;
 using EmpManageSys2.Services.Validation;
+using System.Text;
 
 namespace EmpManageSys2.Controllers
 {
@@ -35,71 +36,80 @@ namespace EmpManageSys2.Controllers
         }
 
         // GET: EmployeeMasters
-        public async Task<IActionResult> Index(string searchTerm, string sortOrder, int pageNumber = 1, string NotMessage = "")
+        public async Task<IActionResult> Index(string NotMessage = "")
         {
             try
             {
                 ViewBag.Notmsg = NotMessage;
                 var employeeManageSys1Context = _context.EmployeeMasters.Include(e => e.City).Include(e => e.Contry).Include(e => e.State).Where(a => a.IsActive == true);
-                int pageSize = 4;
+                //int pageSize = 10;
                 //var paginatedList = await PaginatedList<EmployeeMaster>.CreateAsync(employeeManageSys1Context, pageIndex, pageSize);
                 //return View(paginatedList);
-                //return View(await employeeManageSys1Context.ToListAsync());
+                return View(await employeeManageSys1Context.ToListAsync());
 
                 // New logic
                 // Searching
-                if (!String.IsNullOrEmpty(searchTerm))
-                {
-                    employeeManageSys1Context = employeeManageSys1Context.Where(e => e.EmailAddress.Contains(searchTerm) || e.FirstName.Contains(searchTerm));
-                }
+                //if (!String.IsNullOrEmpty(searchTerm))
+                //{
+                //    employeeManageSys1Context = employeeManageSys1Context.Where(e => e.EmailAddress.Contains(searchTerm) || 
+                //                                                                     e.FirstName.Contains(searchTerm) || 
+                //                                                                     e.City.CityName.Contains(searchTerm) ||
+                //                                                                     e.State.StateName.Contains(searchTerm) ||
+                //                                                                     e.Contry.CountryName.Contains(searchTerm) ||
+                //                                                                     e.PanNumber.Contains(searchTerm) ||
+                //                                                                     e.PassportNumber.Contains(searchTerm) ||
+                //                                                                     e.MobileNumber.Contains(searchTerm));
+                //}
 
-                // Sorting
-                switch (sortOrder)
-                {
-                    case "Email Address":
-                        employeeManageSys1Context = employeeManageSys1Context.OrderBy(e => e.EmailAddress);
-                        break;
-                    case "Country":
-                        employeeManageSys1Context = employeeManageSys1Context.OrderBy(e => e.Contry.CountryName);
-                        break;
-                    case "State":
-                        employeeManageSys1Context = employeeManageSys1Context.OrderBy(e => e.State.StateName);
-                        break;
-                    case "City":
-                        employeeManageSys1Context = employeeManageSys1Context.OrderBy(e => e.City.CityName);
-                        break;
-                    case "Pan Number":
-                        employeeManageSys1Context = employeeManageSys1Context.OrderBy(e => e.PanNumber);
-                        break;
-                    case "Passport Number":
-                        employeeManageSys1Context = employeeManageSys1Context.OrderBy(e => e.PassportNumber);
-                        break;
-                    case "Gender":
-                        employeeManageSys1Context = employeeManageSys1Context.OrderBy(e => e.Gender);
-                        break;
-                    case "Is Active":
-                        employeeManageSys1Context = employeeManageSys1Context.OrderBy(e => e.IsActive);
-                        break; 
-                    default:
-                        employeeManageSys1Context = employeeManageSys1Context.OrderBy(e => e.CreatedDate);
-                        break;
-                }
+                //// Sorting
+                //switch (sortOrder)
+                //{
+                //    case "Email Address":
+                //        employeeManageSys1Context = employeeManageSys1Context.OrderBy(e => e.EmailAddress);
+                //        break;
+                //    case "First Name":
+                //        employeeManageSys1Context = employeeManageSys1Context.OrderBy(e => e.FirstName);
+                //        break;
+                //    case "Country":
+                //        employeeManageSys1Context = employeeManageSys1Context.OrderBy(e => e.Contry.CountryName);
+                //        break;
+                //    case "State":
+                //        employeeManageSys1Context = employeeManageSys1Context.OrderBy(e => e.State.StateName);
+                //        break;
+                //    case "City":
+                //        employeeManageSys1Context = employeeManageSys1Context.OrderBy(e => e.City.CityName);
+                //        break;
+                //    case "Pan Number":
+                //        employeeManageSys1Context = employeeManageSys1Context.OrderBy(e => e.PanNumber);
+                //        break;
+                //    case "Passport Number":
+                //        employeeManageSys1Context = employeeManageSys1Context.OrderBy(e => e.PassportNumber);
+                //        break;
+                //    case "Gender":
+                //        employeeManageSys1Context = employeeManageSys1Context.OrderBy(e => e.Gender);
+                //        break;
+                //    case "Is Active":
+                //        employeeManageSys1Context = employeeManageSys1Context.OrderBy(e => e.IsActive);
+                //        break; 
+                //    default:
+                //        employeeManageSys1Context = employeeManageSys1Context.OrderBy(e => e.CreatedDate);
+                //        break;
+                //}
+                //// Pagination
+                //var totalRecords = await employeeManageSys1Context.CountAsync();
+                //var paginatedEmployees = await employeeManageSys1Context.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+                ////var paginatedList = await PaginatedList<EmployeeMaster>.CreateAsync(employeeManageSys1Context, pageNumber, pageSize);
 
-                // Pagination
-                var totalRecords = await employeeManageSys1Context.CountAsync();
-                var paginatedEmployees = await employeeManageSys1Context.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
-                //var paginatedList = await PaginatedList<EmployeeMaster>.CreateAsync(employeeManageSys1Context, pageNumber, pageSize);
+                //var viewModel = new PaginatedList
+                //{
+                //    employeeMasters = paginatedEmployees,
+                //    SearchTerm = searchTerm,
+                //    SortOrder = sortOrder,
+                //    PageIndex = pageNumber,
+                //    TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize)
+                //};
 
-                var viewModel = new PaginatedList
-                {
-                    employeeMasters = paginatedEmployees,
-                    SearchTerm = searchTerm,
-                    SortOrder = sortOrder,
-                    PageIndex = pageNumber,
-                    TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize)
-                };
-
-                return View(viewModel);
+                //return View(viewModel);
             }
             
             catch (Exception ex)
@@ -136,6 +146,25 @@ namespace EmpManageSys2.Controllers
             {
                 var countries = _context.Countries.ToList();
                 ViewData["Countries"] = countries;
+                var Country = _context.Countries.SingleOrDefault(s => s.RowId == 1);
+                if (Country != null)
+                {
+                    ViewBag.Country = Country;
+                }
+
+                var State = _context.States.SingleOrDefault(s => s.RowId == 3);
+                if (State != null)
+                {
+                    //ViewBag.Country = cnt.CountryName;
+                    ViewBag.State = State;
+                }
+
+                var City = _context.Cities.SingleOrDefault(s => s.RowId == 1);
+                if (City != null)
+                {
+                    //ViewBag.State = st.StateName;
+                    ViewBag.City = City;
+                }
                 return View();
             }
             catch (Exception ex)
@@ -164,6 +193,11 @@ namespace EmpManageSys2.Controllers
                 employeeMaster.EmployeeCode = $"00{maxEmpCode + 1}";
                 if (ModelState.IsValid)
                 {
+                    if (employeeMaster.DateOfJoinee < employeeMaster.DateOfBirth)
+                    {
+                        ModelState.AddModelError("DateOfJoinee", "Joining date cannot be earlier than the birth date.");
+                        return View(employeeMaster);
+                    }
                     if (image != null && image.Length > 0)
                     {
                         // Generate a unique filename
@@ -195,7 +229,8 @@ namespace EmpManageSys2.Controllers
                     }
                     else
                     {
-                        //ViewBag.Message = "Please choose an image to upload.";
+                        ModelState.AddModelError("image", "Please select Image");
+                        return View(employeeMaster);
                     }
                     //_context.Cities.SingleOrDefault(s => s.RowId == employeeMaster.CityId);
 
@@ -225,8 +260,40 @@ namespace EmpManageSys2.Controllers
                 employeeMaster.Gender = employeeMaster.Gender;
                 var countries = _context.Countries.ToList();
                 ViewData["Countries"] = countries;
+
+                var Gender = employeeMaster.Gender;
+                if (Gender != null)
+                {
+                    ViewBag.Gender = Gender;
+                }
+
+                var Country = _context.Countries.SingleOrDefault(s => s.RowId == employeeMaster.ContryId);
+                if (Country != null)
+                {
+                    ViewBag.Country = Country;
+                }
+
+                var State = _context.States.SingleOrDefault(s => s.RowId == employeeMaster.StateId);
+                if (State != null)
+                {
+                    //ViewBag.Country = cnt.CountryName;
+                    ViewBag.State = State;
+                }
+
+                var City = _context.Cities.SingleOrDefault(s => s.RowId == employeeMaster.CityId);
+                if (City != null)
+                {
+                    //ViewBag.State = st.StateName;
+                    ViewBag.City = City;
+                }
+
                 ViewBag.ErrorMessage = message;
-                
+
+                ViewBag.isRefreshed = "Yes";
+                //ViewBag.SelecCountry = from country in _context.Countries where country.RowId == employeeMaster.ContryId select country;
+                //ViewBag.SelecState = from state in _context.States where state.RowId == employeeMaster.ContryId select state;
+                //ViewBag.SelecCity = from city in _context.Cities where city.RowId == employeeMaster.ContryId select city;
+
                 return View(employeeMaster);
 
                 //return View("Error", new ErrorViewModel { Message = ex.InnerException?.Message });
@@ -322,7 +389,7 @@ namespace EmpManageSys2.Controllers
                                 var fileName = Path.GetFileNameWithoutExtension(image.FileName);
                                 var extension = Path.GetExtension(image.FileName);
                                 var todaysDate = DateTime.Now.ToString("ddMMyyyy");
-                                var uniqueFileName = $"{employeeMaster.FirstName}_{employeeMaster.LastName}_{todaysDate}{extension}";
+                                var uniqueFileName = $"{employeeMaster.FirstName}_{employeeMaster.LastName}_{todaysDate}_{Guid.NewGuid()}{extension}";
 
                                 // Get the path to the wwwroot folder
                                 var uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
@@ -380,6 +447,10 @@ namespace EmpManageSys2.Controllers
                         }
                         return RedirectToAction(nameof(Index));
                     }
+
+                    
+                    
+
                 }
                 var Gender = employeeMaster.Gender;
                 if (Gender != null)
@@ -493,6 +564,13 @@ namespace EmpManageSys2.Controllers
         private bool EmployeeMasterExists(int id)
         {
             return _context.EmployeeMasters.Any(e => e.RowId == id);
+        }
+
+        [HttpGet]
+        public JsonResult GetCountries()
+        {
+            var countries = _context.Countries.ToList();
+            return Json(countries);
         }
 
         [HttpGet]
